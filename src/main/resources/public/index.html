@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Algorithm Visualizer</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 20px;
+        min-height: 100vh;
+    }
+    
+    .container-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .subtitle {
+        text-align: center;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        opacity: 0.9;
+    }
+    
+    .controls {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    select, input[type="text"] {
+        padding: 12px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        background: white;
+        color: #333;
+        font-family: inherit;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    select {
+        cursor: pointer;
+        min-width: 180px;
+    }
+    
+    input[type="text"] {
+        flex: 1;
+        min-width: 250px;
+        max-width: 400px;
+    }
+    
+    select:hover, input[type="text"]:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    select:focus, input[type="text"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+    }
+    
+    button {
+        padding: 12px 30px;
+        font-size: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        font-family: inherit;
+    }
+    
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    #stats {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    #container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        height: 400px;
+        gap: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    
+    .bar {
+        flex: 1;
+        background: #3b82f6;
+        transition: all 0.2s;
+        border-radius: 4px 4px 0 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .bar.comparing {
+        background: #fbbf24;
+    }
+    
+    .bar.swapping {
+        background: #ef4444;
+    }
+    
+    .bar.sorted {
+        background: #10b981;
+    }
+    
+    .legend {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input[type="range"] {
+        flex: 1;
+        max-width: 300px;
+        cursor: pointer;
+    }
+
+    label {
+        font-weight: 600;
+    }
+
+    #speedValue {
+        min-width: 60px;
+        text-align: center;
+        font-weight: 600;
+    }
+    
+    button:disabled, select:disabled, input:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+</style>
+</head>
+<body>
+<div class="container-wrapper">
+    <h1>Algorithm Visualizer</h1>
+    
+    <div class="controls">
+        
+        <select id="algorithmSelect">
+            <option value="bubble">Bubble Sort</option>
+            <option value="quick">Quick Sort</option>
+            <option value="merge">Merge Sort</option>
+        </select>
+        <input type="text" id="arrayInput" placeholder="Enter numbers (e.g., 5,3,8,1,9)" value="5,3,8,1,9">
+        <button id="generateBtn">Generate Random</button>
+        <button id="startBtn">Start Visualization</button>
+    </div>
+
+    <div class="controls">
+        <label label for="speedSlider">Animation Speed:</label>
+        <input type="range" id="speedSlider" min="10" max="1000" value="200" step="10">
+        <span id="speedValue">200ms</span>
+    </div>
+    
+    <div id="stats">
+        <div class="stat-item">
+            <span class="stat-value" id="comparisons">0</span>
+            <span class="stat-label">Comparisons</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value" id="swaps">0</span>
+            <span class="stat-label">Swaps</span>
+        </div>
+    </div>
+    
+    <div id="container"></div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background: #3b82f6;"></div>
+            <span>Unsorted</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #fbbf24;"></div>
+            <span>Comparing</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ef4444;"></div>
+            <span>Swapping</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #10b981;"></div>
+            <span>Sorted</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const container = document.getElementById('container');
+    const startBtn = document.getElementById('startBtn');
+    const arrayInput = document.getElementById('arrayInput');
+    const comparisonsEl = document.getElementById('comparisons');
+    const swapsEl = document.getElementById('swaps');
+    const algorithmSelect = document.getElementById('algorithmSelect');
+    const generateBtn = document.getElementById('generateBtn');
+    const speedSlider = document.getElementById('speedSlider');
+    const speedValue = document.getElementById('speedValue');
+    let animationSpeed = 200;
+
+    speedSlider.addEventListener('input', (e) => {
+    animationSpeed = parseInt(e.target.value);
+    speedValue.textContent = `${animationSpeed}ms`;
+    });
+
+    generateBtn.addEventListener('click', () => {
+        const size = 10;
+        const randomArray = [];
+        for (let i = 0; i < size; i++) {
+            randomArray.push(Math.floor(Math.random() * 100) + 1);
+        }
+        arrayInput.value = randomArray.join(',');
+    })
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    startBtn.addEventListener('click', async () => {
+        startBtn.disabled = true;
+        generateBtn.disabled = true;
+        algorithmSelect.disabled = true;
+        arrayInput.disabled = true;
+        
+        const arrayString = arrayInput.value;
+        const selection = algorithmSelect.value;
+        
+        const response = await fetch(`/api/sort?algorithm=${selection}&array=${arrayString}`);
+        const steps = await response.json();
+        
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            drawBars(step.array, step.comparing, step.swapping);
+            comparisonsEl.textContent = step.comparisons;
+            swapsEl.textContent = step.swaps;
+            await sleep(animationSpeed);
+        }
+        
+        const finalStep = steps[steps.length - 1];
+        const allSorted = finalStep.array.map((_, index) => index);
+        drawBars(finalStep.array, [], [], allSorted);
+        
+        // Re-enable controls
+        startBtn.disabled = false;
+        generateBtn.disabled = false;
+        algorithmSelect.disabled = false;
+        arrayInput.disabled = false;
+    });
+
+    function drawBars(array, comparing = [], swapping = [], sorted = []) {
+        container.innerHTML = '';
+        const maxValue = Math.max(...array);
+
+        array.forEach((value, index) => {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+
+            if (sorted.includes(index)) bar.classList.add('sorted');
+            else if (comparing.includes(index)) bar.classList.add('comparing');
+            else if (swapping.includes(index)) bar.classList.add('swapping');
+
+
+            // Set height based on value
+            bar.style.height = `${(value / maxValue) * 100}%`;
+
+            container.appendChild(bar);
+        });
+    }
+</script>
+</body>
+</html>
