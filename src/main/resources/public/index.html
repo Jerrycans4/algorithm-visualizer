@@ -150,12 +150,19 @@
     }
     
     .bar {
-        flex: 1;
-        background: #3b82f6;
-        transition: all 0.2s;
-        border-radius: 4px 4px 0 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
+    flex: 1;
+    background: #3b82f6;
+    transition: all 0.2s;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    padding-bottom: 5px;
+}
     
     .bar.comparing {
         background: #fbbf24;
@@ -336,19 +343,19 @@
     function drawBars(array, comparing = [], swapping = [], sorted = []) {
         container.innerHTML = '';
         const maxValue = Math.max(...array);
-
+        
         array.forEach((value, index) => {
             const bar = document.createElement('div');
             bar.className = 'bar';
-
+            
             if (sorted.includes(index)) bar.classList.add('sorted');
             else if (comparing.includes(index)) bar.classList.add('comparing');
             else if (swapping.includes(index)) bar.classList.add('swapping');
-
-
-            // Set height based on value
+            
             bar.style.height = `${(value / maxValue) * 100}%`;
-
+            
+            bar.textContent = value;
+            
             container.appendChild(bar);
         });
     }
